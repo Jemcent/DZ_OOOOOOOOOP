@@ -10,19 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class ГрадиентныйСпуск:
-    """
-    Класс, реализующий метод градиентного спуска для линейной регрессии
-    """
     
     def __init__(self, learning_rate=0.01, max_iterations=1000, tolerance=1e-6):
-        """
-        Инициализация параметров градиентного спуска
-        
-        Параметры:
-        learning_rate (float): скорость обучения (шаг градиентного спуска)
-        max_iterations (int): максимальное количество итераций
-        tolerance (float): критерий остановки (если изменение функции потерь меньше этого значения)
-        """
         self.learning_rate = learning_rate
         self.max_iterations = max_iterations
         self.tolerance = tolerance
@@ -48,45 +37,18 @@ class ГрадиентныйСпуск:
         y_true = np.array(y_true)
         y_pred = np.array(y_pred)
         
-        # Вычисляем абсолютную процентную ошибку для каждого элемента
-        # Используем |y_true - y_pred| / |y_true|
         percentage_error = np.abs((y_true - y_pred) / (y_true + epsilon))
         
-        # Убираем бесконечности, если были нулевые значения
         percentage_error = np.nan_to_num(percentage_error, nan=0.0, posinf=0.0, neginf=0.0)
         
-        # Вычисляем среднее и умножаем на 100%
         mape = np.mean(percentage_error) * 100
         
         return mape
     
     def predict(self, X):
-        """
-        Предсказание значений на основе обученной модели
-        
-        Параметры:
-        X (numpy array): входные данные
-        
-        Возвращает:
-        numpy array: предсказанные значения
-        """
         return np.dot(X, self.weights) + self.bias
     
     def compute_gradients(self, X, y, y_pred):
-        """
-        Вычисление градиентов для весов и смещения (используем MSE для градиентов)
-        
-        Пояснение: Для градиентного спуска мы используем MSE (Mean Squared Error),
-        так как он даёт гладкий градиент. MAPE используется только для оценки качества.
-        
-        Параметры:
-        X (numpy array): входные данные
-        y (numpy array): истинные значения
-        y_pred (numpy array): предсказанные значения
-        
-        Возвращает:
-        tuple: (градиент_весов, градиент_смещения)
-        """
         n_samples = len(y)
         
         # Градиенты для MSE: d/dw = (2/n) * X.T.dot(y_pred - y)
@@ -97,17 +59,6 @@ class ГрадиентныйСпуск:
         return dw, db
     
     def fit(self, X, y, verbose=True):
-        """
-        Обучение модели с помощью градиентного спуска
-        
-        Параметры:
-        X (numpy array): входные данные (матрица признаков)
-        y (numpy array): целевые значения
-        verbose (bool): печатать ли информацию о процессе обучения
-        
-        Возвращает:
-        self: обученная модель
-        """
         # Преобразуем данные в numpy массивы, если это списки
         X = np.array(X)
         y = np.array(y)
@@ -115,10 +66,9 @@ class ГрадиентныйСпуск:
         # Получаем размерность данных
         n_samples, n_features = X.shape
         
-        # Инициализируем веса и смещение нулями
         self.weights = np.zeros(n_features)
         self.bias = 0
-        
+
         # Очищаем историю потерь
         self.loss_history = []
         
@@ -170,9 +120,6 @@ class ГрадиентныйСпуск:
         return self
     
     def plot_loss_history(self):
-        """
-        Визуализация изменения MAPE в процессе обучения
-        """
         plt.figure(figsize=(10, 6))
         plt.plot(self.loss_history, 'b-', linewidth=2)
         plt.title('Динамика изменения MAPE в процессе обучения', fontsize=14)
@@ -183,25 +130,12 @@ class ГрадиентныйСпуск:
         plt.show()
     
     def evaluate(self, X_test, y_test):
-        """
-        Оценка модели на тестовых данных
-        
-        Параметры:
-        X_test (numpy array): тестовые данные
-        y_test (numpy array): истинные значения
-        
-        Возвращает:
-        float: MAPE на тестовых данных
-        """
         y_pred = self.predict(X_test)
         mape = self.mape_loss(y_test, y_pred)
         print(f"\nОценка на тестовых данных: MAPE = {mape:.4f}%")
         return mape
     
     def predict_with_confidence(self, X):
-        """
-        Предсказание с дополнительной информацией о качестве
-        """
         predictions = self.predict(X)
         print("\nРезультаты предсказания:")
         print("-" * 50)
@@ -209,20 +143,11 @@ class ГрадиентныйСпуск:
             print(f"Объект {i+1}: предсказанное значение = {pred:.4f}")
         return predictions
 
-
-# ============================================================================
-# ПРИМЕР ИСПОЛЬЗОВАНИЯ БИБЛИОТЕКИ
-# ============================================================================
-
 def демонстрация_работы_библиотеки():
-    """
-    Функция, демонстрирующая работу библиотеки градиентного спуска
-    """
     print("\n" + "=" * 60)
     print("ДЕМОНСТРАЦИЯ РАБОТЫ БИБЛИОТЕКИ")
     print("=" * 60)
-    
-    # 1. Генерируем синтетические данные для демонстрации
+
     print("\n1. Генерация тестовых данных...")
     np.random.seed(42)  # Для воспроизводимости результатов
     n_samples = 100
@@ -281,11 +206,6 @@ def демонстрация_работы_библиотеки():
     print(f"✓ Средняя ошибка предсказания: {test_mape:.2f}%")
     print("=" * 60)
 
-
-# ============================================================================
-# ЗАПУСК ДЕМОНСТРАЦИИ
-# ============================================================================
-
 if __name__ == "__main__":
     демонстрация_работы_библиотеки()
     
@@ -311,3 +231,4 @@ if __name__ == "__main__":
     mape_train = model_manual.mape_loss(y_manual, model_manual.predict(X_manual))
     print(f"Точность модели на обучающих данных: {100 - mape_train:.2f}%")
     print(f"Средняя ошибка: {mape_train:.2f}%")
+print('Бабулька')
