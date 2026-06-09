@@ -8,6 +8,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+print('--------Добавлено Через pycharm--------')
 class ГрадиентныйСпуск:
     
     def __init__(self, learning_rate=0.01, max_iterations=1000, tolerance=1e-6):
